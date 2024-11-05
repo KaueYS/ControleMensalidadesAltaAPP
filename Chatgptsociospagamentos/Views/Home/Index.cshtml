@@ -1,0 +1,36 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+@{
+    if (SignInManager.IsSignedIn(User))
+    {
+
+        <div class="text-center">
+
+            <img src="~/Images/Entrada_Alta.jpg" width="500">
+
+        </div>
+    }
+    else
+    {
+
+        <div>
+            <div class="text-center">
+                <img src="~/Images/Entrada_Alta.jpg" width="500">
+                <p>Faça seu login:</p>
+                <a asp-area="Identity" asp-page="/Account/Login">Entrar</a>
+               
+            </div>
+
+        </div>
+    }
+}
+
+

@@ -1,0 +1,42 @@
+﻿@model Chatgptsociospagamentos.Models.Pagamento
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+
+
+<h5>Tem certeza que deseja deletar o pagamento de @Model.Associado.Nome?</h5>
+<hr />
+
+<div>
+    
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Valor)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Valor)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.DataPagamento)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.DataPagamento)
+        </dd>
+       
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Associado)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Associado.AssociadoId)
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="PagamentoId" />
+        <input type="submit" value="Deletar" class="btn btn-danger" /> |
+        <a asp-action="Index">Voltar</a>
+    </form>
+</div>
