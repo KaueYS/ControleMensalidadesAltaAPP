@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Chatgptsociospagamentos.Migrations
 {
     /// <inheritdoc />
-    public partial class WebkCloud : Migration
+    public partial class ModelsComplementos : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -84,6 +84,11 @@ namespace Chatgptsociospagamentos.Migrations
                     Telefone = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     DataAniversario = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Endereco = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Equipamento = table.Column<bool>(type: "tinyint(1)", nullable: true),
+                    Categoria = table.Column<int>(type: "int", nullable: false),
+                    Necessidade = table.Column<bool>(type: "tinyint(1)", nullable: true),
                     Ativo = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
@@ -227,7 +232,7 @@ namespace Chatgptsociospagamentos.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     AssociadoId = table.Column<int>(type: "int", nullable: false),
                     Valor = table.Column<double>(type: "double", nullable: false),
-                    DataPagamento = table.Column<DateTime>(name: "Data Pagamento", type: "datetime(6)", nullable: false),
+                    DataPagamento = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     ParcelasPagas = table.Column<double>(type: "double", nullable: false),
                     MesAdimplente = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },

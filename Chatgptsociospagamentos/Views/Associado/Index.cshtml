@@ -1,101 +1,93 @@
 ﻿@model IEnumerable<Chatgptsociospagamentos.Models.Associado>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Lista de socios";
 }
 
-<h5>Controle de sócios</h5>
-<hr />
+<h5>Lista de associados</h5>
+
 <p>
-    <a asp-action="Create">Cadastrar novo Associado</a>
+    <a asp-action="Create">Cadastrar novo associado</a>
 </p>
-
-<hr />
-
 <table class="table">
     <thead>
         <tr>
-            <th>Nome do Associado</th>
-            <th>Documento</th>
+            <th>Nome</th>
+            <th>CPF</th>
             <th>E-Mail</th>
             <th>Telefone</th>
-            <th>Data Aniversário</th>
+            <th>Endereço</th>
+            <th>Aniversário</th>
+            <th>Categoria</th>
+            <th>Equipamento</th>
+            <th>PCD</th>
             <th>Ativo</th>
             <th></th>
+
+
         </tr>
     </thead>
     <tbody>
-        @foreach (var pagamento in Model)
+
+        @foreach (var associado in Model)
         {
             <tr>
-                <td>@pagamento.Nome</td>
-                <td>@pagamento.Documento</td>
-                <td>@pagamento.Email</td>
-                <td>@pagamento.Telefone</td>
-                <td>@pagamento.DataAniversario.ToString("dd/MM/yyyy")</td>
-                <td>@pagamento.Ativo</td>
-                
+                <td>@associado.Nome</td>
+                <td>@associado.Documento</td>
+                <td>@associado.Email</td>
+                <td>@associado.Telefone</td>
+                <td>@associado.Endereco</td>
+                <td>@associado.DataAniversario.ToString("dd/MM/yyyy")</td>
+                <td>@associado.Categoria</td>
+                <td>@(associado.Equipamento ? "Sim" : "Nao")</td>
+                <td>@(associado.Necessidade ? "Sim" : "Nao")</td>
+                <td>@(associado.Ativo ? "Sim" : "Nao")</td>
+
                 <td>
-                    <a asp-action="Edit" asp-route-id="@pagamento.AssociadoId">Editar</a> |
-                    <a asp-action="Details" asp-route-id="@pagamento.AssociadoId">Detalhes</a> |
-                    <a asp-action="Delete" asp-route-id="@pagamento.AssociadoId">Deletar</a>
+                    <a asp-action="Edit" asp-route-id="@associado.AssociadoId">Editar</a> |
+                    <a asp-action="Details" asp-route-id="@associado.AssociadoId">Detalhes</a> |
+                    <a asp-action="Delete" asp-route-id="@associado.AssociadoId">Deletar</a>
                 </td>
             </tr>
         }
+        @* @foreach (var item in Model) {
+        <tr>
+        <td>
+        @Html.DisplayFor(modelItem => item.Nome)
+        </td>
+        <td>
+        @Html.DisplayFor(modelItem => item.Documento)
+        </td>
+        <td>
+        @Html.DisplayFor(modelItem => item.Email)
+        </td>
+        <td>
+        @Html.DisplayFor(modelItem => item.Telefone)
+        </td>
+        <td>
+        @Html.DisplayFor(modelItem => item.Endereco)
+        </td>
+        <td>
+        @Html.DisplayFor(modelItem => item.DataAniversario.ToString("dd/MM/yyyy"))
+        </td>
+        <td>
+        @Html.DisplayFor(modelItem => item.Categoria)
+        </td>
+        <td>
+        @Html.DisplayFor(modelItem => item.Equipamento)
+        </td>
+        <td>
+        @Html.DisplayFor(modelItem => item.Necessidade)
+        </td>
+        <td>
+        @Html.DisplayFor(modelItem => item.Ativo)
+        </td>
+        <td>
+        <a asp-action="Edit" asp-route-id="@item.AssociadoId">Edit</a> |
+        <a asp-action="Details" asp-route-id="@item.AssociadoId">Details</a> |
+        <a asp-action="Delete" asp-route-id="@item.AssociadoId">Delete</a>
+        </td>
+        </tr>*@
+      
     </tbody>
 </table>
-@* <table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Nome)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Documento)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Telefone)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DataAniversario)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Ativo)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Nome)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Documento)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Email)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Telefone)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DataAniversario)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Ativo)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.AssociadoId">Editar</a> |
-                    <a asp-action="Details" asp-route-id="@item.AssociadoId">Detalhes</a> |
-                    <a asp-action="Delete" asp-route-id="@item.AssociadoId">Deletar</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table> *@

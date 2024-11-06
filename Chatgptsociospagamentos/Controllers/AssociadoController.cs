@@ -7,35 +7,30 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Chatgptsociospagamentos.Data;
 using Chatgptsociospagamentos.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Chatgptsociospagamentos.Controllers
 {
-    [Authorize]
     public class AssociadoController : Controller
     {
-
-
         private readonly AppDbContext _context;
-        private readonly UserManager<IdentityUser> _userManager;
 
-        public AssociadoController(AppDbContext context, UserManager<IdentityUser> userManager)
+        public AssociadoController(AppDbContext context)
         {
             _context = context;
-            _userManager = userManager;
         }
 
         // GET: Associado
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Associados.ToListAsync());
+            return _context.Associados != null ?
+                        View(await _context.Associados.ToListAsync()) :
+                        Problem("Entity set 'AppDbContext.Associados'  is null.");
         }
 
         // GET: Associado/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
+            if (id == null || _context.Associados == null)
             {
                 return NotFound();
             }
@@ -61,7 +56,7 @@ namespace Chatgptsociospagamentos.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("AssociadoId,Nome,Email,Documento,Telefone,DataAniversario,Ativo")] Associado associado)
+        public async Task<IActionResult> Create([Bind("AssociadoId,Nome,Documento,Email,Telefone,Endereco,DataAniversario,Categoria,Equipamento,Necessidade,Ativo")] Associado associado)
         {
             if (ModelState.IsValid)
             {
@@ -76,7 +71,7 @@ namespace Chatgptsociospagamentos.Controllers
         // GET: Associado/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            if (id == null || _context.Associados == null)
             {
                 return NotFound();
             }
@@ -94,7 +89,7 @@ namespace Chatgptsociospagamentos.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("AssociadoId,Nome,Email,Documento,Telefone,DataAniversario,Ativo")] Associado associado)
+        public async Task<IActionResult> Edit(int id, [Bind("AssociadoId,Nome,Documento,Email,Telefone,Endereco,DataAniversario,Categoria,Equipamento,Necessidade,Ativo")] Associado associado)
         {
             if (id != associado.AssociadoId)
             {
@@ -127,7 +122,7 @@ namespace Chatgptsociospagamentos.Controllers
         // GET: Associado/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
+            if (id == null || _context.Associados == null)
             {
                 return NotFound();
             }
@@ -147,19 +142,23 @@ namespace Chatgptsociospagamentos.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            if (_context.Associados == null)
+            {
+                return Problem("Entity set 'AppDbContext.Associados'  is null.");
+            }
             var associado = await _context.Associados.FindAsync(id);
             if (associado != null)
             {
                 _context.Associados.Remove(associado);
             }
-
+            
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool AssociadoExists(int id)
         {
-            return _context.Associados.Any(e => e.AssociadoId == id);
+          return (_context.Associados?.Any(e => e.AssociadoId == id)).GetValueOrDefault();
         }
     }
 }

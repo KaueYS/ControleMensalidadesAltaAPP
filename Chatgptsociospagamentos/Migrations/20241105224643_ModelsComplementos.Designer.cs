@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Chatgptsociospagamentos.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241105093638_WebkCloud")]
-    partial class WebkCloud
+    [Migration("20241105224643_ModelsComplementos")]
+    partial class ModelsComplementos
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,6 +31,9 @@ namespace Chatgptsociospagamentos.Migrations
                     b.Property<bool>("Ativo")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<int>("Categoria")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("DataAniversario")
                         .HasColumnType("datetime(6)");
 
@@ -39,6 +42,15 @@ namespace Chatgptsociospagamentos.Migrations
 
                     b.Property<string>("Email")
                         .HasColumnType("longtext");
+
+                    b.Property<string>("Endereco")
+                        .HasColumnType("longtext");
+
+                    b.Property<bool?>("Equipamento")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool?>("Necessidade")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Nome")
                         .IsRequired()
@@ -62,8 +74,7 @@ namespace Chatgptsociospagamentos.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("DataPagamento")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("Data Pagamento");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime>("MesAdimplente")
                         .HasColumnType("datetime(6)");

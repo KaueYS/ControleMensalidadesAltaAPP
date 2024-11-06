@@ -67,7 +67,7 @@ namespace Chatgptsociospagamentos.Controllers
        
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PagamentoId,AssociadoId,Valor,DataPagamento,DataVencimento,Atrasado")] Pagamento pagamento)
+        public async Task<IActionResult> Create([Bind("PagamentoId,AssociadoId,Valor,DataPagamento,")] Pagamento pagamento)
         {
             if (ModelState.IsValid)
             {
