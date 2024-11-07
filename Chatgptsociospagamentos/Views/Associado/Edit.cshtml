@@ -49,6 +49,7 @@
                 <select asp-for="Categoria" asp-items="Html.GetEnumSelectList<CategoriaEnum>()" class="form-control"></select>
                 <span asp-validation-for="Categoria" class="text-danger"></span>
             </div>
+            <hr />
             <div class="form-group form-check">
                 <label class="form-check-label">
                     <input class="form-check-input" asp-for="Equipamento" /> @Html.DisplayNameFor(model => model.Equipamento)
