@@ -72,27 +72,29 @@ namespace Chatgptsociospagamentos.Controllers
             if (ModelState.IsValid)
             {
                 double diarias = 0.60;
+                double dias = 0;
+                DateTime suporte = DateTime.Now;
+
                 var pagamentoBD = await _context.Pagamentos.FirstOrDefaultAsync(x => x.AssociadoId == pagamento.AssociadoId);
 
                 if (pagamentoBD != null)
                 {
-                    
-                    pagamentoBD.DataPagamento = pagamento.DataPagamento;
-                    
+                    dias = pagamento.Valor * diarias;
+                    suporte = pagamentoBD.Validade.AddDays(Convert.ToInt32(dias));
+                    pagamentoBD.Validade= suporte;
                     pagamentoBD.Valor += pagamento.Valor;
-                    pagamentoBD.ParcelasPagas = (pagamentoBD.Valor * diarias);
-                    pagamentoBD.ParcelasPagas += pagamento.ParcelasPagas;
-
-                    pagamentoBD.MesAdimplente = pagamentoBD.DataPagamento.AddDays(Convert.ToInt32(pagamentoBD.ParcelasPagas));
+                    pagamentoBD.DataPagamento = pagamento.DataPagamento;
+                   
+                   
+                    
                     _context.Update(pagamentoBD);
                 }
                 else
                 {
-
+                    dias = pagamento.Valor * diarias;
+                    pagamento.Validade = pagamento.DataPagamento.AddDays(Convert.ToInt32(dias));
                     
-                    pagamento.ParcelasPagas = Convert.ToInt32(pagamento.Valor * diarias);
-
-                    pagamento.MesAdimplente = pagamento.DataPagamento.AddDays(Convert.ToInt32(pagamento.ParcelasPagas));
+                    
                     
                     _context.Add(pagamento);
                 }

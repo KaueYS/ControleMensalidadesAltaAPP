@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Chatgptsociospagamentos.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241105224643_ModelsComplementos")]
-    partial class ModelsComplementos
+    [Migration("20241121232514_MudancasGerais")]
+    partial class MudancasGerais
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -46,10 +46,10 @@ namespace Chatgptsociospagamentos.Migrations
                     b.Property<string>("Endereco")
                         .HasColumnType("longtext");
 
-                    b.Property<bool?>("Equipamento")
+                    b.Property<bool>("Equipamento")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<bool?>("Necessidade")
+                    b.Property<bool>("Necessidade")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Nome")
@@ -76,11 +76,8 @@ namespace Chatgptsociospagamentos.Migrations
                     b.Property<DateTime>("DataPagamento")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<DateTime>("MesAdimplente")
+                    b.Property<DateTime>("Validade")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<double>("ParcelasPagas")
-                        .HasColumnType("double");
 
                     b.Property<double>("Valor")
                         .HasColumnType("double");

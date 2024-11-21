@@ -73,11 +73,8 @@ namespace Chatgptsociospagamentos.Migrations
                     b.Property<DateTime>("DataPagamento")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<DateTime>("MesAdimplente")
+                    b.Property<DateTime>("Validade")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<double>("ParcelasPagas")
-                        .HasColumnType("double");
 
                     b.Property<double>("Valor")
                         .HasColumnType("double");

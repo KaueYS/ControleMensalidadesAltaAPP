@@ -12,11 +12,11 @@ namespace Chatgptsociospagamentos.Models
         public double Valor { get; set; }
         
         public DateTime DataPagamento { get; set; }
-        [Display(Name = "QTD dias pagos")]
-        public double ParcelasPagas { get; set; }
+        //[Display(Name = "QTD dias pagos")]
+        //public double ParcelasPagas { get; set; }
         public Associado? Associado { get; set; }
 
-        [Display(Name = "Pago até o dia")]
-        public DateTime MesAdimplente { get; set; }
+        [Display(Name = "Valido até")]
+        public DateTime Validade { get; set; }
     }
 }

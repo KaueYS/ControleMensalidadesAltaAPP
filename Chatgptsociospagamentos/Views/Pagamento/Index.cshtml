@@ -26,8 +26,8 @@
             <th>Valor</th>
             <th>Data de Pagamento</th>
            
-            <th>Dias pagos</th>
-            <th>Pago até o dia</th>
+            
+            <th>Validade</th>
             <th>Status</th>
             <th></th>
         </tr>
@@ -40,10 +40,10 @@
                 <td>@pagamento.Valor.ToString("C")</td>
                 <td>@pagamento.DataPagamento.ToString("dd/MM/yyyy")</td>
 
-                <td>@pagamento.ParcelasPagas</td>
-                <td>@pagamento.MesAdimplente.ToString("dd/MM/yyyy")</td>
+                <td>@pagamento.Validade.ToString("dd/MM/yyyy")</td>
+                
                 <td>
-                    @if (pagamento.MesAdimplente < DateTime.Now)
+                    @if (pagamento.Validade < DateTime.Now)
                     {
                         <span class="text-danger">Atrasado</span>
                     }
