@@ -1,114 +1,54 @@
-﻿@model IEnumerable<Chatgptsociospagamentos.Models.Pagamento>
+﻿@model IEnumerable<PagamentoModel>
+
 
 @{
     ViewData["Title"] = "Index";
 }
 
+<h4>Lista de pagamentos</h4>
 
 
-<h5>Lista de Pagamentos</h5>
-<hr />
-<a asp-action="Create" asp-controller="Pagamento">Adicionar novo pagamento</a>
-<hr />
-@* <form method="get" asp-action="Index">
-    <label>Filtrar por status:</label>
-    <select name="statusFiltro" onchange="this.form.submit()">
-        <option value="" selected>Todos</option>
-        <option value="Atrasados">Atrasados</option>
-        <option value="Antecipados">Antecipados</option>
-    </select>
-</form> *@
-
-<table class="table" id="TabPagamento">
+<table class="table">
     <thead>
         <tr>
-            <th>Nome do Associado</th>
-            <th>Valor</th>
-            <th>Data de Pagamento</th>
-           
-            
-            <th>Validade</th>
-            <th>Status</th>
+            <th>
+                @Html.DisplayNameFor(model => model.Socio)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DataPagamento)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DiasAdimplencia)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Valor)
+            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var pagamento in Model)
+        @foreach (var item in Model)
         {
             <tr>
-                <td>@pagamento.Associado.Nome</td>
-                <td>@pagamento.Valor.ToString("C")</td>
-                <td>@pagamento.DataPagamento.ToString("dd/MM/yyyy")</td>
-
-                <td>@pagamento.Validade.ToString("dd/MM/yyyy")</td>
-                
                 <td>
-                    @if (pagamento.Validade < DateTime.Now)
-                    {
-                        <span class="text-danger">Atrasado</span>
-                    }
-                    else
-                    {
-                        <span class="text-success">Em dia</span>
-                    }
-                   
+                    @Html.DisplayFor(modelItem => item.Socio.Nome)
                 </td>
                 <td>
-                    @* <a asp-action="Edit" asp-route-id="@pagamento.PagamentoId">Editar</a> | *@
-                    <a asp-action="Details" asp-route-id="@pagamento.PagamentoId">Detalhes</a> |
-                    <a asp-action="Delete" asp-route-id="@pagamento.PagamentoId">Deletar</a>
+                    @Html.DisplayFor(modelItem => item.DataPagamento)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DiasAdimplencia)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Valor)
+                </td>
+                <td>
+                    @* <a asp-action="Edit" asp-route-id="@item.Id">Editar o pagamento</a>  *@
+                    @* <a asp-action="Details" asp-route-id="@item.Id">Detalhes</a> | *@
+                    <a asp-action="Delete" asp-route-id="@item.Id">Deletar</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
 
-@* <table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Valor)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DataPagamento)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DataVencimento)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Atrasado)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Associado)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Valor)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataPagamento)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataVencimento)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Atrasado)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Associado.AssociadoId)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.PagamentoId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.PagamentoId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.PagamentoId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
- *@

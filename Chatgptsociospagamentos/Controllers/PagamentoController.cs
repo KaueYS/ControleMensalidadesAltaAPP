@@ -15,6 +15,7 @@ namespace Chatgptsociospagamentos.Controllers
     [Authorize]
     public class PagamentoController : Controller
     {
+        
         private readonly AppDbContext _context;
 
         public PagamentoController(AppDbContext context)
@@ -22,21 +23,48 @@ namespace Chatgptsociospagamentos.Controllers
             _context = context;
         }
 
-
-
-
-
-        public IActionResult Index(string statusFiltro, int? page)
+        public IActionResult Pagamento(int id)
         {
-            var pagamentos = _context.Pagamentos
-                                     .Include(p => p.Associado).ToList()
-                                     .Where(x => x.Associado.Ativo == true);
-            
-            
+            var socio = _context.Associados.FirstOrDefault(s => s.Id == id);
+            if (socio == null) return NotFound();
 
-            return View(pagamentos);
+            ViewBag.Socio = socio;
+            return View();
         }
-       
+
+        [HttpPost]
+        public IActionResult Pagamento(int id, decimal valorPago)
+        {
+            var socio = _context.Associados.Include(s => s.Pagamentos).FirstOrDefault(s => s.Id == id);
+            if (socio == null) return NotFound();
+
+            var dias = PagamentoModel.CalcularDiasAdimplencia(valorPago);
+
+            var pagamento = new PagamentoModel
+            {
+                SocioId = id,
+                DataPagamento = DateTime.Today,
+                Valor = valorPago,
+                DiasAdimplencia = dias
+            };
+
+            var vencimentoAnterior = socio.ObterVencimentoAtual();
+            var novoVencimento = pagamento.CalcularVencimento(vencimentoAnterior);
+
+            socio.Pagamentos.Add(pagamento);
+            _context.SaveChanges();
+
+            TempData["Msg"] = $"Pagamento de R$ {pagamento.Valor:F2} registrado! Adimplência de {pagamento.DiasAdimplencia} dias. Novo vencimento: {novoVencimento:dd/MM/yyyy}";
+            return RedirectToAction("Index", "Associado");
+        }
+
+        // GET: Pagamento
+        public async Task<IActionResult> Index()
+        {
+            var appDbContext = _context.Pagamentos.Include(p => p.Socio);
+            return View(await appDbContext.ToListAsync());
+        }
+
         // GET: Pagamento/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -45,71 +73,40 @@ namespace Chatgptsociospagamentos.Controllers
                 return NotFound();
             }
 
-            var pagamento = await _context.Pagamentos
-                .Include(p => p.Associado)
-                .FirstOrDefaultAsync(m => m.PagamentoId == id);
-            if (pagamento == null)
+            var pagamentoModel = await _context.Pagamentos
+                .Include(p => p.Socio)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (pagamentoModel == null)
             {
                 return NotFound();
             }
 
-            return View(pagamento);
+            return View(pagamentoModel);
         }
 
         // GET: Pagamento/Create
         public IActionResult Create()
         {
-            ViewData["AssociadoId"] = new SelectList(_context.Associados.OrderBy(x => x.Nome), "AssociadoId", "Nome");
-            
+            ViewData["SocioId"] = new SelectList(_context.Associados, "Id", "Id");
             return View();
         }
 
-       
+        // POST: Pagamento/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PagamentoId,AssociadoId,Valor,DataPagamento,")] Pagamento pagamento)
+        public async Task<IActionResult> Create([Bind("Id,SocioId,DataPagamento,DiasAdimplencia,Valor")] PagamentoModel pagamentoModel)
         {
             if (ModelState.IsValid)
             {
-                double diarias = 0.60;
-                double dias = 0;
-                DateTime suporte = DateTime.Now;
-
-                var pagamentoBD = await _context.Pagamentos.FirstOrDefaultAsync(x => x.AssociadoId == pagamento.AssociadoId);
-
-                if (pagamentoBD != null)
-                {
-                    dias = pagamento.Valor * diarias;
-                    suporte = pagamentoBD.Validade.AddDays(Convert.ToInt32(dias));
-                    pagamentoBD.Validade= suporte;
-                    pagamentoBD.Valor += pagamento.Valor;
-                    pagamentoBD.DataPagamento = pagamento.DataPagamento;
-                   
-                   
-                    
-                    _context.Update(pagamentoBD);
-                }
-                else
-                {
-                    dias = pagamento.Valor * diarias;
-                    pagamento.Validade = pagamento.DataPagamento.AddDays(Convert.ToInt32(dias));
-                    
-                    
-                    
-                    _context.Add(pagamento);
-                }
-
+                _context.Add(pagamentoModel);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AssociadoId"] = new SelectList(_context.Associados, "AssociadoId", "AssociadoId", pagamento.AssociadoId);
-            
-
-
-            return View(pagamento);
+            ViewData["SocioId"] = new SelectList(_context.Associados, "Id", "Id", pagamentoModel.SocioId);
+            return View(pagamentoModel);
         }
-
-
 
         // GET: Pagamento/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -119,13 +116,13 @@ namespace Chatgptsociospagamentos.Controllers
                 return NotFound();
             }
 
-            var pagamento = await _context.Pagamentos.FindAsync(id);
-            if (pagamento == null)
+            var pagamentoModel = await _context.Pagamentos.FindAsync(id);
+            if (pagamentoModel == null)
             {
                 return NotFound();
             }
-            ViewData["AssociadoId"] = new SelectList(_context.Associados, "AssociadoId", "Nome", pagamento.AssociadoId);
-            return View(pagamento);
+            ViewData["SocioId"] = new SelectList(_context.Associados, "Id", "Nome", pagamentoModel.SocioId);
+            return View(pagamentoModel);
         }
 
         // POST: Pagamento/Edit/5
@@ -133,9 +130,9 @@ namespace Chatgptsociospagamentos.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("AssociadoId,Valor,DataPagamento")] Pagamento pagamento)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,SocioId,DataPagamento,DiasAdimplencia,Valor")] PagamentoModel pagamentoModel)
         {
-            if (id != pagamento.PagamentoId)
+            if (id != pagamentoModel.Id)
             {
                 return NotFound();
             }
@@ -144,12 +141,12 @@ namespace Chatgptsociospagamentos.Controllers
             {
                 try
                 {
-                    _context.Update(pagamento);
+                    _context.Update(pagamentoModel);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PagamentoExists(pagamento.PagamentoId))
+                    if (!PagamentoModelExists(pagamentoModel.Id))
                     {
                         return NotFound();
                     }
@@ -160,8 +157,8 @@ namespace Chatgptsociospagamentos.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AssociadoId"] = new SelectList(_context.Associados, "AssociadoId", "AssociadoId", pagamento.AssociadoId);
-            return View(pagamento);
+            ViewData["SocioId"] = new SelectList(_context.Associados, "Id", "Id", pagamentoModel.SocioId);
+            return View(pagamentoModel);
         }
 
         // GET: Pagamento/Delete/5
@@ -172,15 +169,15 @@ namespace Chatgptsociospagamentos.Controllers
                 return NotFound();
             }
 
-            var pagamento = await _context.Pagamentos
-                .Include(p => p.Associado)
-                .FirstOrDefaultAsync(m => m.PagamentoId == id);
-            if (pagamento == null)
+            var pagamentoModel = await _context.Pagamentos
+                .Include(p => p.Socio)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (pagamentoModel == null)
             {
                 return NotFound();
             }
 
-            return View(pagamento);
+            return View(pagamentoModel);
         }
 
         // POST: Pagamento/Delete/5
@@ -188,19 +185,19 @@ namespace Chatgptsociospagamentos.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var pagamento = await _context.Pagamentos.FindAsync(id);
-            if (pagamento != null)
+            var pagamentoModel = await _context.Pagamentos.FindAsync(id);
+            if (pagamentoModel != null)
             {
-                _context.Pagamentos.Remove(pagamento);
+                _context.Pagamentos.Remove(pagamentoModel);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PagamentoExists(int id)
+        private bool PagamentoModelExists(int id)
         {
-            return _context.Pagamentos.Any(e => e.PagamentoId == id);
+            return _context.Pagamentos.Any(e => e.Id == id);
         }
     }
 }

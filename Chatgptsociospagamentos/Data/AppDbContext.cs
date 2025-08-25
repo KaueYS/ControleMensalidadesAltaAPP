@@ -10,7 +10,7 @@ namespace Chatgptsociospagamentos.Data
             : base(options)
         {
         }
-        public DbSet<Associado> Associados { get; set; }
-        public DbSet<Pagamento> Pagamentos { get; set; }
+        public DbSet<AssociadoModel> Associados { get; set; }
+        public DbSet<PagamentoModel> Pagamentos { get; set; }
     }
 }

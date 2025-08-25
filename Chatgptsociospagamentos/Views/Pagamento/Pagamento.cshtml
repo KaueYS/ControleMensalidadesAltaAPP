@@ -1,0 +1,28 @@
+﻿@model PagamentoModel
+
+@{
+    ViewData["Title"] = "Novo Pagamento";
+    var socio = ViewBag.Socio as AssociadoModel;
+}
+
+<h2>Registrar Pagamento para @socio?.Nome</h2>
+<br />
+<form asp-action="Pagamento" method="post">
+    <input type="hidden" name="id" value="@socio?.Id" />
+
+    <div class="form-group">
+        <label for="valorPago">Valor do Pagamento (R$):</label>
+        <input type="number" name="valorPago" class="form-control" />
+    </div>
+    <br />
+    <button type="submit" class="btn btn-success">Registrar</button>
+    <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+</form>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+

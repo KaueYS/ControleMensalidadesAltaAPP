@@ -4,9 +4,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Chatgptsociospagamentos.Models
 {
-    public class Associado
+    public class AssociadoModel
     {
-        public int AssociadoId { get; set; }
+        [Key]
+        public int Id { get; set; }
 
         [Display(Name = "Nome Completo")]
         public string Nome { get; set; } = string.Empty;
@@ -42,5 +43,39 @@ namespace Chatgptsociospagamentos.Models
 
         public bool Ativo {  get; set; }
 
+
+        public List<PagamentoModel>? Pagamentos { get; set; }
+
+
+        public DateTime? ObterVencimentoAtual()
+        {
+            if (!Pagamentos.Any()) return null;
+
+            var pagamentosOrdenados = Pagamentos.OrderBy(p => p.DataPagamento).ToList();
+            DateTime? vencimento = null;
+
+            foreach (var pagamento in pagamentosOrdenados)
+            {
+                vencimento = pagamento.CalcularVencimento(vencimento);
+            }
+
+            return vencimento;
+        }
+
+        public bool EstaAdimplente()
+        {
+            var vencimento = ObterVencimentoAtual();
+            return vencimento.HasValue && vencimento.Value >= DateTime.Today;
+        }
+
+        public int DiasRestantes()
+        {
+            var vencimento = ObterVencimentoAtual();
+            return vencimento.HasValue && vencimento >= DateTime.Today
+                ? (vencimento.Value - DateTime.Today).Days
+                : 0;
+        }
     }
+
 }
+

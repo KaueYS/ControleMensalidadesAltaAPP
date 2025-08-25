@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Chatgptsociospagamentos.Data;
 using Chatgptsociospagamentos.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Chatgptsociospagamentos.Controllers
 {
+    [Authorize]
     public class AssociadoController : Controller
     {
         private readonly AppDbContext _context;
@@ -22,27 +24,38 @@ namespace Chatgptsociospagamentos.Controllers
         // GET: Associado
         public async Task<IActionResult> Index()
         {
-            return _context.Associados != null ?
-                        View(await _context.Associados.ToListAsync()) :
-                        Problem("Entity set 'AppDbContext.Associados'  is null.");
+            var associadoPagamento = await _context.Associados.Include(x => x.Pagamentos).ToListAsync();
+            ViewBag.associadoPagto = associadoPagamento;
+            return View(associadoPagamento);
+
         }
 
-        // GET: Associado/Details/5
-        public async Task<IActionResult> Details(int? id)
+
+        public IActionResult Details(int id)
         {
-            if (id == null || _context.Associados == null)
+            var socio = _context.Associados.Include(s => s.Pagamentos).FirstOrDefault(s => s.Id == id);
+            if (socio == null) return NotFound();
+            return View(socio);
+        }
+
+
+
+        //GET: Associado/Details/5
+        public async Task<IActionResult> DetalhesAssociado(int? id)
+        {
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var associado = await _context.Associados
-                .FirstOrDefaultAsync(m => m.AssociadoId == id);
-            if (associado == null)
+            var associadoModel = await _context.Associados
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (associadoModel == null)
             {
                 return NotFound();
             }
 
-            return View(associado);
+            return View(associadoModel);
         }
 
         // GET: Associado/Create
@@ -56,32 +69,33 @@ namespace Chatgptsociospagamentos.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("AssociadoId,Nome,Documento,Email,Telefone,Endereco,DataAniversario,Categoria,Equipamento,Necessidade,Ativo")] Associado associado)
+        public async Task<IActionResult> Create([Bind("Id,Nome,Documento,Email,Telefone,Endereco,DataAniversario,Categoria,Equipamento,Necessidade,Ativo")] AssociadoModel associadoModel)
         {
             if (ModelState.IsValid)
             {
-                associado.Ativo = true;
-                _context.Add(associado);
+                associadoModel.Ativo = true;
+                associadoModel.Nome = associadoModel.Nome.ToUpper().Trim();
+                _context.Add(associadoModel);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(associado);
+            return View(associadoModel);
         }
 
         // GET: Associado/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Associados == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var associado = await _context.Associados.FindAsync(id);
-            if (associado == null)
+            var associadoModel = await _context.Associados.FindAsync(id);
+            if (associadoModel == null)
             {
                 return NotFound();
             }
-            return View(associado);
+            return View(associadoModel);
         }
 
         // POST: Associado/Edit/5
@@ -89,9 +103,9 @@ namespace Chatgptsociospagamentos.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("AssociadoId,Nome,Documento,Email,Telefone,Endereco,DataAniversario,Categoria,Equipamento,Necessidade,Ativo")] Associado associado)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Documento,Email,Telefone,Endereco,DataAniversario,Categoria,Equipamento,Necessidade,Ativo")] AssociadoModel associadoModel)
         {
-            if (id != associado.AssociadoId)
+            if (id != associadoModel.Id)
             {
                 return NotFound();
             }
@@ -100,12 +114,12 @@ namespace Chatgptsociospagamentos.Controllers
             {
                 try
                 {
-                    _context.Update(associado);
+                    _context.Update(associadoModel);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AssociadoExists(associado.AssociadoId))
+                    if (!AssociadoModelExists(associadoModel.Id))
                     {
                         return NotFound();
                     }
@@ -116,25 +130,25 @@ namespace Chatgptsociospagamentos.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(associado);
+            return View(associadoModel);
         }
 
         // GET: Associado/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Associados == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var associado = await _context.Associados
-                .FirstOrDefaultAsync(m => m.AssociadoId == id);
-            if (associado == null)
+            var associadoModel = await _context.Associados
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (associadoModel == null)
             {
                 return NotFound();
             }
 
-            return View(associado);
+            return View(associadoModel);
         }
 
         // POST: Associado/Delete/5
@@ -142,23 +156,19 @@ namespace Chatgptsociospagamentos.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Associados == null)
+            var associadoModel = await _context.Associados.FindAsync(id);
+            if (associadoModel != null)
             {
-                return Problem("Entity set 'AppDbContext.Associados'  is null.");
+                _context.Associados.Remove(associadoModel);
             }
-            var associado = await _context.Associados.FindAsync(id);
-            if (associado != null)
-            {
-                _context.Associados.Remove(associado);
-            }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool AssociadoExists(int id)
+        private bool AssociadoModelExists(int id)
         {
-          return (_context.Associados?.Any(e => e.AssociadoId == id)).GetValueOrDefault();
+            return _context.Associados.Any(e => e.Id == id);
         }
     }
 }
