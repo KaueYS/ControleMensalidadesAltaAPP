@@ -1,0 +1,74 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model IEnumerable<DocumentoModel>
+
+
+@{
+    ViewBag.Title = "Lista de Documentos";
+}
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary">
+            <i class="bi bi-archive"></i> Transparencia
+        </h2>
+
+        @if (User.Identity.IsAuthenticated)
+        {
+            <a asp-controller="Documentos" asp-action="Upload" class="btn btn-success">
+                <i class="bi bi-upload"></i> Novo Upload
+            </a>
+
+        }
+
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            <i class="bi bi-info-circle"></i> Nenhum documento enviado até o momento.
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-body p-0">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-primary">
+                        <tr>
+                            <th scope="col">Arquivo</th>
+                            <th scope="col">Data de Upload</th>
+                            <th scope="col" class="text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var doc in Model)
+                        {
+                            var extensao = System.IO.Path.GetExtension(doc.NomeArquivo)?.ToLower();
+                            string icone = "bi-file-earmark";
+                            if (extensao == ".pdf") icone = "bi-file-earmark-pdf text-danger";
+                            else if (extensao == ".doc" || extensao == ".docx") icone = "bi-file-earmark-word text-primary";
+
+                            <tr>
+                                <td>
+                                    <i class="bi @icone fs-4 me-2"></i>
+                                    @doc.NomeArquivo
+                                </td>
+                                <td>@doc.DataUpload.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td class="text-center">
+                                    <a href="@doc.CaminhoArquivo" target="_blank" class="btn btn-sm btn-outline-primary me-2">
+                                        <i class="bi bi-eye"></i> Visualizar
+                                    </a>
+                                    <a href="@doc.CaminhoArquivo" download class="btn btn-sm btn-outline-success">
+                                        <i class="bi bi-download"></i> Download
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    <br />
+    <a asp-controller="Home" asp-action="Index">Voltar</a>
+</div>

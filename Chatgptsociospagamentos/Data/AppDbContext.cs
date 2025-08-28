@@ -12,5 +12,6 @@ namespace Chatgptsociospagamentos.Data
         }
         public DbSet<AssociadoModel> Associados { get; set; }
         public DbSet<PagamentoModel> Pagamentos { get; set; }
+        public DbSet<DocumentoModel> Documentos { get; set; }
     }
 }

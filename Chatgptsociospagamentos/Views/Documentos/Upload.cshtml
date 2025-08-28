@@ -1,0 +1,32 @@
+﻿@model DocumentoModel
+@{
+    ViewBag.Title = "Upload de Documentos";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4>Upload de Documento</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Upload" asp-controller="Documentos" method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="arquivo" class="form-label">Selecione um arquivo (PDF ou Word)</label>
+                            <input type="file" name="arquivo" id="arquivo" class="form-control" />
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-upload"></i> Enviar Arquivo
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-muted text-center">
+                    Apenas arquivos <b>PDF</b>, <b>.doc</b> e <b>.docx</b> são aceitos.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
