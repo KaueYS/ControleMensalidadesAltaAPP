@@ -2,8 +2,28 @@
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
 
-
 @{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="d-flex flex-column justify-content-center align-items-center vh-100 text-center">
+
+    <img src="~/Images/CTTA.jpg" class="img-fluid" style="max-width: 400px;" alt="Logo CTTA" />
+
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <!-- Se logado, apenas mostra o logo centralizado -->
+    }
+    else
+    {
+        <div class="mt-4">
+            <p class="fs-5">Faça seu login:</p>
+            <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary px-4">Entrar</a>
+        </div>
+    }
+
+</div>
+@* @{
     ViewData["Title"] = "Home Page";
 }
 
@@ -31,6 +51,6 @@
 
         </div>
     }
-}
+} *@
 
 
