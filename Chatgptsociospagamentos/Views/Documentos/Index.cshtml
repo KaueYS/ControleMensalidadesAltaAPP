@@ -14,8 +14,8 @@
 
         @if (User.Identity.IsAuthenticated)
         {
-            <a asp-controller="Documentos" asp-action="Upload" class="btn btn-success">
-                <i class="bi bi-upload"></i> Novo Upload
+            <a asp-controller="Documentos" asp-action="Upload" class="btn btn-outline-primary">
+                <i class="bi bi-upload"></i> Gravar novo arquivo
             </a>
 
         }
@@ -33,7 +33,7 @@
         <div class="card shadow-sm border-0 rounded-3">
             <div class="card-body p-0">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="table-primary">
+                    <thead class="table-light">
                         <tr>
                             <th scope="col">Arquivo</th>
                             <th scope="col">Data de Upload</th>
